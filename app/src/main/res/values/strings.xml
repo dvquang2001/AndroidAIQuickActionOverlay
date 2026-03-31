@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">QuickActionOverlay</string>
+    <string name="accessibility_service_label">AI Quick Action</string>
+    <string name="accessibility_service_description">Cho phép AI Overlay đọc văn bản bạn chọn để thực hiện các thao tác AI như dịch, tóm tắt, giải thích.</string>
+</resources>
