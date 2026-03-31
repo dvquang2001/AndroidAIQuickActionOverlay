@@ -2,7 +2,6 @@ package com.qcp.aioverlay.overlay
 
 import android.content.Context
 import android.graphics.PixelFormat
-import android.os.Build
 import android.view.Gravity
 import android.view.WindowManager
 import androidx.compose.runtime.Composable
@@ -14,7 +13,8 @@ import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.qcp.aioverlay.service.AIAccessibilityService
-import com.qcp.aioverlay.ui.main.Greeting
+import com.qcp.aioverlay.ui.overlay.FloatingButtonContent
+import com.qcp.aioverlay.ui.overlay.OverlayScreen
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
