@@ -50,7 +50,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.qcp.aioverlay.domain.model.ActionType
 import com.qcp.aioverlay.domain.model.ProcessResult
 import com.qcp.aioverlay.ui.theme.QuickActionOverlayTheme
@@ -59,7 +58,7 @@ import com.qcp.aioverlay.ui.theme.QuickActionOverlayTheme
 fun OverlayScreen(
     selectedText: String,
     onDismiss: () -> Unit,
-    viewModel: OverlayViewModel = hiltViewModel()
+    viewModel: OverlayViewModel,
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current

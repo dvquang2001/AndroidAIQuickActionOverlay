@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
 class OverlayViewModel @Inject constructor(
     private val processTextUseCase: ProcessTextUseCase
 ) : BaseViewModel<OverlayUiState, OverlayIntent, OverlayEffect>(OverlayUiState()){

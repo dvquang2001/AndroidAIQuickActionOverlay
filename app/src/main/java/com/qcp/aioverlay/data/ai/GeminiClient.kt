@@ -1,6 +1,6 @@
 package com.qcp.aioverlay.data.ai
 
-import com.google.ai.client.generativeai.BuildConfig
+import com.qcp.aioverlay.BuildConfig
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.generationConfig
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +13,7 @@ import javax.inject.Singleton
 class GeminiClient @Inject constructor() {
 
     private val model = GenerativeModel(
-        modelName = "gemini-1.5-flash",
+        modelName = "gemini-1.5-flash-latest" ,
         apiKey = BuildConfig.GEMINI_API_KEY,
         generationConfig = generationConfig {
             temperature = 0.7f
