@@ -1,15 +1,20 @@
 package com.qcp.aioverlay.ui.main
 
+import android.widget.Space
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -76,6 +81,44 @@ fun MainScreen(
                 isEnabled = state.hasOverlayPermission,
                 onClick = { viewModel.onIntent(MainIntent.OpenOverlaySettings) }
             )
+
+            Spacer(Modifier.height(16.dp))
+
+            // --------- History ---------
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(Icons.Default.History, contentDescription = null)
+                Text(
+                    "History",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+
+            Spacer(Modifier.height(8.dp))
+
+            if(state.history.isEmpty()) {
+                Text(
+                    "No history",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            } else {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(bottom = 16.dp)
+                ) {
+                    items(state.history, key = { it.id }) { item ->
+                        HistoryItem(
+                            item = item
+                        ) {
+                            viewModel.onIntent(MainIntent.DeleteHistory(item.id))
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -117,7 +160,7 @@ fun PermissionCard(
 }
 
 @Composable
-fun HistoryIcon(
+fun HistoryItem(
     item: HistoryItem,
     onDelete: () -> Unit
 ) {
