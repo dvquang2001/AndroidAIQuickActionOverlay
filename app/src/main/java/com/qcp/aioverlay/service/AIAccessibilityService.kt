@@ -1,8 +1,11 @@
 package com.qcp.aioverlay.service
 
 import android.accessibilityservice.AccessibilityService
-import android.accessibilityservice.AccessibilityServiceInfo
 import android.annotation.SuppressLint
+import android.content.ClipboardManager
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -12,22 +15,17 @@ import javax.inject.Inject
 
 @SuppressLint("AccessibilityPolicy")
 @AndroidEntryPoint
-class AIAccessibilityService: AccessibilityService() {
+class AIAccessibilityService : AccessibilityService() {
 
     @Inject lateinit var overlayManager: OverlayManager
+
+    private val handler = Handler(Looper.getMainLooper())
+    private var lastLongClickedNode: AccessibilityNodeInfo? = null
 
     // ===== Lifecycle =====
     override fun onServiceConnected() {
         super.onServiceConnected()
         Log.i(TAG, "onServiceConnected")
-//        serviceInfo = AccessibilityServiceInfo().apply {
-//            eventTypes = AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED or
-//                    AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
-//            feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
-//            flags = AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
-//                    AccessibilityServiceInfo.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY
-//            notificationTimeout = 100
-//        }
         overlayManager.attachService(this)
     }
 
@@ -36,12 +34,41 @@ class AIAccessibilityService: AccessibilityService() {
         super.onDestroy()
     }
 
-
     // ===== Event handling =====
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        Log.d(TAG, "eventType: ${AccessibilityEvent.eventTypeToString(event?.eventType ?: 0)}, text: ${event?.text}")
-        when(event?.eventType) {
-            AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> handleTextSelection(event)
+        when (event?.eventType) {
+
+            AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
+                val source = event.source ?: return
+                val text = extractSelectedText(source)
+                if (!text.isNullOrBlank() && text.length >= 3) {
+                    Log.d(TAG, "EditText selection: $text")
+                    overlayManager.showFloatingButton(text)
+                } else {
+                    overlayManager.hideFloatingButton()
+                }
+            }
+
+            AccessibilityEvent.TYPE_VIEW_LONG_CLICKED -> {
+                Log.d(TAG, "Long click detected")
+                lastLongClickedNode = event.source
+
+                handler.postDelayed({
+                    handleLongClick()
+                }, 300)
+            }
+
+            AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED -> {
+                if (lastLongClickedNode != null) {
+                    val text = findSelectedTextInWindow()
+                    if (!text.isNullOrBlank() && text.length >= 3) {
+                        Log.d(TAG, "Window scan found: $text")
+                        overlayManager.showFloatingButton(text)
+                        lastLongClickedNode = null
+                    }
+                }
+            }
+
             else -> Unit
         }
     }
@@ -50,25 +77,75 @@ class AIAccessibilityService: AccessibilityService() {
         overlayManager.hideAll()
     }
 
-    // ===== Private funciton =====
-    private fun handleTextSelection(event: AccessibilityEvent) {
-        val source = event.source ?: return
-        val selectedText = extractSelectedText(source)
-        Log.d(TAG, "Selected text: $selectedText")
+    // ===== Private =====
 
-        if(selectedText.isNullOrBlank() || selectedText.length < 3) {
-            overlayManager.hideFloatingButton()
+    private fun handleLongClick() {
+        val windowText = findSelectedTextInWindow()
+        if (!windowText.isNullOrBlank() && windowText.length >= 3) {
+            Log.d(TAG, "Long click → window text: $windowText")
+            overlayManager.showFloatingButton(windowText)
+            lastLongClickedNode = null
             return
         }
 
-        overlayManager.showFloatingButton(selectedText)
+        val nodeText = lastLongClickedNode?.text?.toString()
+        if (!nodeText.isNullOrBlank() && nodeText.length >= 3) {
+            Log.d(TAG, "Long click → node text: $nodeText")
+            overlayManager.showFloatingButton(nodeText)
+            lastLongClickedNode = null
+            return
+        }
+
+        val clipText = getClipboardText()
+        if (!clipText.isNullOrBlank() && clipText.length >= 3) {
+            Log.d(TAG, "Long click → clipboard: $clipText")
+            overlayManager.showFloatingButton(clipText)
+            lastLongClickedNode = null
+        }
+    }
+
+    /**
+     * Traverse toàn bộ view tree từ root, tìm node có text selection.
+     */
+    private fun findSelectedTextInWindow(): String? {
+        val root = rootInActiveWindow ?: return null
+        return try {
+            findSelectedNode(root)
+        } finally {
+            root.recycle()
+        }
+    }
+
+    private fun findSelectedNode(node: AccessibilityNodeInfo): String? {
+        val start = node.textSelectionStart
+        val end = node.textSelectionEnd
+        if (start in 0..<end) {
+            val text = node.text ?: return searchChildren(node)
+            return try {
+                text.subSequence(start, end).toString().takeIf { it.length >= 3 }
+                    ?: searchChildren(node)
+            } catch (e: Exception) {
+                searchChildren(node)
+            }
+        }
+
+        return searchChildren(node)
+    }
+
+    private fun searchChildren(node: AccessibilityNodeInfo): String? {
+        for (i in 0 until node.childCount) {
+            val child = node.getChild(i) ?: continue
+            val result = findSelectedNode(child)
+            child.recycle()
+            if (result != null) return result
+        }
+        return null
     }
 
     private fun extractSelectedText(node: AccessibilityNodeInfo): String? {
         val start = node.textSelectionStart
         val end = node.textSelectionEnd
-        if(start !in 0..<end) return null
-
+        if (start !in 0..<end) return null
         return try {
             node.text?.subSequence(start, end)?.toString()
         } catch (e: Exception) {
@@ -76,10 +153,12 @@ class AIAccessibilityService: AccessibilityService() {
         }
     }
 
-    // ===== Companion =====
+    private fun getClipboardText(): String? {
+        val cm = getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+        return cm?.primaryClip?.getItemAt(0)?.text?.toString()
+    }
+
     companion object {
-        var instance: AIAccessibilityService? = null
-            private set
         private const val TAG = "AIAccessibilityService"
     }
 }
