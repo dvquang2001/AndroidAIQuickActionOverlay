@@ -6,6 +6,35 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
+import java.util.Properties
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use(::load)
+    }
+}
+
+fun readGeminiApiKey(): String {
+    val sources = listOf(
+        providers.gradleProperty("GEMINI_API_KEY").orNull,
+        localProperties.getProperty("GEMINI_API_KEY"),
+        System.getenv("GEMINI_API_KEY")
+    )
+
+    return sources.firstOrNull { !it.isNullOrBlank() }?.trim().orEmpty()
+}
+
+fun readGeminiModel(): String {
+    val sources = listOf(
+        providers.gradleProperty("GEMINI_MODEL").orNull,
+        localProperties.getProperty("GEMINI_MODEL"),
+        System.getenv("GEMINI_MODEL")
+    )
+
+    return sources.firstOrNull { !it.isNullOrBlank() }?.trim().orEmpty()
+}
+
 android {
     namespace = "com.qcp.aioverlay"
     compileSdk = 36
@@ -17,8 +46,10 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        val key = project.findProperty("GEMINI_API_KEY")?.toString() ?: ""
+        val key = readGeminiApiKey().replace("\\", "\\\\").replace("\"", "\\\"")
+        val model = readGeminiModel().replace("\\", "\\\\").replace("\"", "\\\"")
         buildConfigField("String", "GEMINI_API_KEY", "\"$key\"")
+        buildConfigField("String", "GEMINI_MODEL", "\"$model\"")
     }
 
     buildFeatures {

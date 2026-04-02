@@ -1,12 +1,15 @@
 package com.qcp.aioverlay.domain.usecase
 
 import com.qcp.aioverlay.data.ai.GeminiClient
+import com.qcp.aioverlay.data.ai.GeminiException
 import com.qcp.aioverlay.domain.model.ActionType
 import com.qcp.aioverlay.domain.model.OverlayAction
 import com.qcp.aioverlay.domain.model.ProcessResult
 import com.qcp.aioverlay.domain.repository.HistoryRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import javax.inject.Inject
@@ -27,8 +30,11 @@ class ProcessTextUseCase @Inject constructor(
             }
             .onStart { emit(ProcessResult.Loading) }
             .catch { e ->
-                emit(ProcessResult.Error(e.message ?: "Error"))
+                e.printStackTrace()
+                val message = (e as? GeminiException)?.message ?: (e.message ?: "Error")
+                emit(ProcessResult.Error(message))
             }
+            .flowOn(Dispatchers.IO)
     }
 
     suspend fun saveToHistory(action: OverlayAction, output: String) {

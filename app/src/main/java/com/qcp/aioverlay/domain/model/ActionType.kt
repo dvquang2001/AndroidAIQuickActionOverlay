@@ -11,7 +11,7 @@ enum class ActionType(val label: String, val prompt: String) {
     ),
     EXPLAIN(
         label = "Explain",
-        prompt = "Improve and rewrite the following text to be clearer and more professional:\n\n"
+        prompt = "Explain the following text clearly in simple English:\n\n"
     ),
     CUSTOM(
         label = "Custom",

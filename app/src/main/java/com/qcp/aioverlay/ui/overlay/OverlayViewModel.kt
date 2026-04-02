@@ -10,7 +10,7 @@ import com.qcp.aioverlay.ui.base.UIEffect
 import com.qcp.aioverlay.ui.base.UiIntent
 import com.qcp.aioverlay.ui.base.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -19,10 +19,16 @@ import javax.inject.Inject
 class OverlayViewModel @Inject constructor(
     private val processTextUseCase: ProcessTextUseCase
 ) : BaseViewModel<OverlayUiState, OverlayIntent, OverlayEffect>(OverlayUiState()){
+    private var activeRequestJob: Job? = null
 
     override suspend fun handleIntent(intent: OverlayIntent) {
         when(intent) {
-            is OverlayIntent.SetText -> updateState { copy(selectedText = intent.text) }
+            is OverlayIntent.SetText -> updateState {
+                copy(
+                    selectedText = intent.text,
+                    result = null
+                )
+            }
 
             is OverlayIntent.SelectAction ->
                 updateState { copy(selectedAction = intent.type, result = null) }
@@ -47,6 +53,7 @@ class OverlayViewModel @Inject constructor(
     private fun runAction() {
         val s = state.value
         if(s.selectedText.isBlank()) return
+        if(activeRequestJob?.isActive == true || s.result is ProcessResult.Loading) return
 
         val action = OverlayAction(
             inputText = s.selectedText,
@@ -55,7 +62,8 @@ class OverlayViewModel @Inject constructor(
         )
 
         var lastOutput = ""
-        processTextUseCase(action)
+        activeRequestJob?.cancel()
+        activeRequestJob = processTextUseCase(action)
             .onEach { result ->
                 updateState { copy(result = result) }
                 if(result is ProcessResult.Success) lastOutput = result.output
@@ -63,13 +71,10 @@ class OverlayViewModel @Inject constructor(
             .launchIn(viewModelScope)
             .also {
                 it.invokeOnCompletion { error ->
+                    activeRequestJob = null
                     if(error == null && lastOutput.isNotBlank()) {
-                        viewModelScope.let { scope ->
-                            MainScope().let {
-                                scope.launch {
-                                    processTextUseCase.saveToHistory(action, lastOutput)
-                                }
-                            }
+                        viewModelScope.launch {
+                            processTextUseCase.saveToHistory(action, lastOutput)
                         }
                     }
                 }
