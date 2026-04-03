@@ -22,11 +22,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.qcp.aioverlay.R
 import com.qcp.aioverlay.ui.theme.QuickActionOverlayTheme
 
 @Composable
@@ -58,12 +60,12 @@ fun RegisterScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Create Account",
+                    text = stringResource(R.string.register_title),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Register to get started",
+                    text = stringResource(R.string.register_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -73,7 +75,7 @@ fun RegisterScreen(
                 OutlinedTextField(
                     value = state.email,
                     onValueChange = { viewModel.onIntent(RegisterIntent.EmailChanged(it)) },
-                    label = { Text("Email") },
+                    label = { Text(stringResource(R.string.field_email)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
@@ -84,7 +86,7 @@ fun RegisterScreen(
                 OutlinedTextField(
                     value = state.password,
                     onValueChange = { viewModel.onIntent(RegisterIntent.PasswordChanged(it)) },
-                    label = { Text("Password") },
+                    label = { Text(stringResource(R.string.field_password)) },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     singleLine = true,
@@ -96,7 +98,7 @@ fun RegisterScreen(
                 OutlinedTextField(
                     value = state.confirmPassword,
                     onValueChange = { viewModel.onIntent(RegisterIntent.ConfirmPasswordChanged(it)) },
-                    label = { Text("Confirm Password") },
+                    label = { Text(stringResource(R.string.register_field_confirm_password)) },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     singleLine = true,
@@ -104,9 +106,13 @@ fun RegisterScreen(
                 )
 
                 state.error?.let { error ->
+                    val errorText = when (error) {
+                        RegisterError.PasswordMismatch -> stringResource(R.string.register_error_password_mismatch)
+                        is RegisterError.Remote -> error.message
+                    }
                     Spacer(Modifier.height(8.dp))
                     Text(
-                        text = error,
+                        text = errorText,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall
                     )
@@ -126,14 +132,14 @@ fun RegisterScreen(
                             modifier = Modifier.height(18.dp)
                         )
                     } else {
-                        Text("Register")
+                        Text(stringResource(R.string.register_btn_register))
                     }
                 }
 
                 Spacer(Modifier.height(8.dp))
 
                 TextButton(onClick = { viewModel.onIntent(RegisterIntent.NavigateToLogin) }) {
-                    Text("Already have an account? Sign In")
+                    Text(stringResource(R.string.register_link_sign_in))
                 }
             }
         }

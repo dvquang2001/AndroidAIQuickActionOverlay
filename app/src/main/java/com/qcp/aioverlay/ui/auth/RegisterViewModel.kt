@@ -31,7 +31,7 @@ class RegisterViewModel @Inject constructor(
         val s = state.value
         if (s.isLoading) return
         if (s.password != s.confirmPassword) {
-            updateState { copy(error = "Passwords do not match") }
+            updateState { copy(error = RegisterError.PasswordMismatch) }
             return
         }
         signUpUseCase(s.email.trim(), s.password)
@@ -42,7 +42,7 @@ class RegisterViewModel @Inject constructor(
                         updateState { copy(isLoading = false) }
                         emitEffect(RegisterEffect.NavigateToMain)
                     }
-                    is AuthResult.Error -> updateState { copy(isLoading = false, error = result.message) }
+                    is AuthResult.Error -> updateState { copy(isLoading = false, error = RegisterError.Remote(result.message)) }
                 }
             }
             .launchIn(viewModelScope)
@@ -54,8 +54,15 @@ data class RegisterUiState(
     val password: String = "",
     val confirmPassword: String = "",
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: RegisterError? = null
 ) : UiState
+
+sealed interface RegisterError {
+    /** Validation error resolved to a string resource in the UI. */
+    data object PasswordMismatch : RegisterError
+    /** Remote/Firebase error with a ready-made message. */
+    data class Remote(val message: String) : RegisterError
+}
 
 sealed interface RegisterIntent : UiIntent {
     data class EmailChanged(val value: String) : RegisterIntent

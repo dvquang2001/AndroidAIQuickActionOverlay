@@ -22,11 +22,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.qcp.aioverlay.R
 import com.qcp.aioverlay.ui.theme.QuickActionOverlayTheme
 
 @Composable
@@ -58,12 +60,12 @@ fun LoginScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "AI Overlay",
+                    text = stringResource(R.string.login_title),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "Sign in to continue",
+                    text = stringResource(R.string.login_subtitle),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -73,7 +75,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = state.email,
                     onValueChange = { viewModel.onIntent(LoginIntent.EmailChanged(it)) },
-                    label = { Text("Email") },
+                    label = { Text(stringResource(R.string.field_email)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
@@ -84,7 +86,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = state.password,
                     onValueChange = { viewModel.onIntent(LoginIntent.PasswordChanged(it)) },
-                    label = { Text("Password") },
+                    label = { Text(stringResource(R.string.field_password)) },
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     singleLine = true,
@@ -114,14 +116,14 @@ fun LoginScreen(
                             modifier = Modifier.height(18.dp)
                         )
                     } else {
-                        Text("Sign In")
+                        Text(stringResource(R.string.login_btn_sign_in))
                     }
                 }
 
                 Spacer(Modifier.height(8.dp))
 
                 TextButton(onClick = { viewModel.onIntent(LoginIntent.NavigateToRegister) }) {
-                    Text("Don't have an account? Register")
+                    Text(stringResource(R.string.login_link_register))
                 }
             }
         }

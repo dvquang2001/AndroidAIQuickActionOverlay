@@ -2,4 +2,57 @@
     <string name="app_name">QuickActionOverlay</string>
     <string name="accessibility_service_label">AI Quick Action</string>
     <string name="accessibility_service_description">Cho phép AI Overlay đọc văn bản bạn chọn để thực hiện các thao tác AI như dịch, tóm tắt, giải thích.</string>
+
+    <!-- Shared field labels -->
+    <string name="field_email">Email</string>
+    <string name="field_password">Password</string>
+
+    <!-- Main screen -->
+    <string name="main_title">AI Overlay</string>
+    <string name="main_cd_delete_history">Delete history</string>
+    <string name="main_cd_sign_out">Sign out</string>
+    <string name="main_permission_accessibility_title">Accessibility Service</string>
+    <string name="main_permission_accessibility_desc">Enable to use AI Quick Action</string>
+    <string name="main_permission_overlay_title">Overlay Permission</string>
+    <string name="main_permission_overlay_desc">Enable to show AI Quick Action</string>
+    <string name="main_history_title">History</string>
+    <string name="main_history_empty">No history</string>
+    <string name="main_cd_delete_item">Delete</string>
+
+    <!-- Floating button -->
+    <string name="floating_btn_label">AI ✨</string>
+    <string name="floating_btn_cd_close">Close</string>
+
+    <!-- Overlay screen -->
+    <string name="overlay_title">AI Quick Action</string>
+    <string name="overlay_cd_close">Close</string>
+    <string name="overlay_selected_text_label">Selected text:</string>
+    <string name="overlay_custom_prompt_hint">Enter your own prompt…</string>
+    <!-- %s = action label e.g. "Translate" -->
+    <string name="overlay_run_action">Run %s</string>
+    <string name="overlay_result_label">Result:</string>
+    <string name="overlay_cd_copy">Copy</string>
+    <!-- %s = error message -->
+    <string name="overlay_error_format">Error: %s</string>
+    <string name="overlay_clipboard_label">AI Result</string>
+
+    <!-- Action type labels (UI mapping from domain enum) -->
+    <string name="action_translate">Translate</string>
+    <string name="action_summarize">Summarize</string>
+    <string name="action_explain">Explain</string>
+    <string name="action_custom">Custom</string>
+
+    <!-- Login screen -->
+    <string name="login_title">AI Overlay</string>
+    <string name="login_subtitle">Sign in to continue</string>
+    <string name="login_btn_sign_in">Sign In</string>
+    <string name="login_link_register">Don\'t have an account? Register</string>
+
+    <!-- Register screen -->
+    <string name="register_title">Create Account</string>
+    <string name="register_subtitle">Register to get started</string>
+    <string name="register_field_confirm_password">Confirm Password</string>
+    <string name="register_btn_register">Register</string>
+    <string name="register_link_sign_in">Already have an account? Sign In</string>
+    <string name="register_error_password_mismatch">Passwords do not match</string>
 </resources>

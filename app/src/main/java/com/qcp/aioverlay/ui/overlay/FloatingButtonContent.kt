@@ -18,7 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.qcp.aioverlay.R
 import com.qcp.aioverlay.ui.theme.QuickActionOverlayTheme
 
 @Composable
@@ -38,11 +40,11 @@ fun FloatingButtonContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = onActionClick, modifier = Modifier.height(36.dp)) {
-                    Text("AI ✨", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.floating_btn_label), style = MaterialTheme.typography.labelMedium)
                 }
                 Spacer(Modifier.width(4.dp))
                 IconButton(onClick = onDismiss, modifier = Modifier.size(32.dp)) {
-                    Icon(Icons.Default.Close, contentDescription = "Close",
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.floating_btn_cd_close),
                         modifier = Modifier.size(16.dp))
                 }
             }
