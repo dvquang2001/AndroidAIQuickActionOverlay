@@ -54,6 +54,20 @@ android {
         buildConfigField("String", "BACKEND_API_KEY", "\"$backendKey\"")
     }
 
+    buildTypes {
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+        debug {
+            isMinifyEnabled = false
+        }
+    }
+
     buildFeatures {
         compose = true
         buildConfig = true
