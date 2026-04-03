@@ -47,10 +47,10 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        // Backend config - set in local.properties
-        val backendUrl = project.findProperty("BACKEND_BASE_URL")?.toString() ?: "http://10.0.2.2:8080"
+        // Backend config - set in local.properties (IP only, e.g. BACKEND_BASE_URL=192.168.1.94)
+        val backendHost = project.findProperty("BACKEND_BASE_URL")?.toString() ?: "192.168.1.94"
         val backendKey = project.findProperty("BACKEND_API_KEY")?.toString() ?: "android-dev-key-001"
-        buildConfigField("String", "BACKEND_BASE_URL", "\"http://$backendUrl:8080\"")
+        buildConfigField("String", "BACKEND_BASE_URL", "\"http://$backendHost:8080\"")
         buildConfigField("String", "BACKEND_API_KEY", "\"$backendKey\"")
     }
 

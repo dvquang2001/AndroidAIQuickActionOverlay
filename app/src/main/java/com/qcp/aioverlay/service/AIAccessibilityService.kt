@@ -40,9 +40,11 @@ class AIAccessibilityService : AccessibilityService() {
 
             AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> {
                 val source = event.source ?: return
+                // Try standard selection first (works for EditText/TextView)
                 val text = extractSelectedText(source)
+                    ?: event.text.firstOrNull()?.toString()?.takeIf { it.length >= 3 } // WebView fallback
                 if (!text.isNullOrBlank() && text.length >= 3) {
-                    Log.d(TAG, "EditText selection: $text")
+                    Log.d(TAG, "Selection changed: $text")
                     overlayManager.showFloatingButton(text)
                 } else {
                     overlayManager.hideFloatingButton()
@@ -96,11 +98,20 @@ class AIAccessibilityService : AccessibilityService() {
             return
         }
 
-        val clipText = getClipboardText()
-        if (!clipText.isNullOrBlank() && clipText.length >= 3) {
-            Log.d(TAG, "Long click → clipboard: $clipText")
-            overlayManager.showFloatingButton(clipText)
-            lastLongClickedNode = null
+        // Direct clipboard read is blocked by Android 10+ when not in focus.
+        // Instead, perform ACTION_COPY via the accessibility API (permitted),
+        // then read clipboard after the copy completes.
+        val node = lastLongClickedNode
+        if (node != null) {
+            node.performAction(AccessibilityNodeInfo.ACTION_COPY)
+            handler.postDelayed({
+                val clipText = getClipboardText()
+                if (!clipText.isNullOrBlank() && clipText.length >= 3) {
+                    Log.d(TAG, "Long click → ACTION_COPY clipboard: $clipText")
+                    overlayManager.showFloatingButton(clipText)
+                }
+                lastLongClickedNode = null
+            }, 300)
         }
     }
 
