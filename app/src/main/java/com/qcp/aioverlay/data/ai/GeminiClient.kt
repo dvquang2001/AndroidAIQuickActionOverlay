@@ -22,7 +22,7 @@ import javax.inject.Singleton
 @Singleton
 class GeminiClient @Inject constructor() {
 
-    private val apiKey = BuildConfig.GEMINI_API_KEY
+    private val apiKey = BuildConfig.BACKEND_API_KEY
     private val modelMutex = Mutex()
     @Volatile
     private var resolvedModel: String? = null

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
@@ -15,21 +16,21 @@ val localProperties = Properties().apply {
     }
 }
 
-fun readGeminiApiKey(): String {
+fun readBackendBaseUrl(): String {
     val sources = listOf(
-        providers.gradleProperty("GEMINI_API_KEY").orNull,
-        localProperties.getProperty("GEMINI_API_KEY"),
-        System.getenv("GEMINI_API_KEY")
+        providers.gradleProperty("BACKEND_BASE_URL").orNull,
+        localProperties.getProperty("BACKEND_BASE_URL"),
+        System.getenv("BACKEND_BASE_URL")
     )
 
     return sources.firstOrNull { !it.isNullOrBlank() }?.trim().orEmpty()
 }
 
-fun readGeminiModel(): String {
+fun readBackendApiKey(): String {
     val sources = listOf(
-        providers.gradleProperty("GEMINI_MODEL").orNull,
-        localProperties.getProperty("GEMINI_MODEL"),
-        System.getenv("GEMINI_MODEL")
+        providers.gradleProperty("BACKEND_API_KEY").orNull,
+        localProperties.getProperty("BACKEND_API_KEY"),
+        System.getenv("BACKEND_API_KEY")
     )
 
     return sources.firstOrNull { !it.isNullOrBlank() }?.trim().orEmpty()
@@ -46,10 +47,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        val key = readGeminiApiKey().replace("\\", "\\\\").replace("\"", "\\\"")
-        val model = readGeminiModel().replace("\\", "\\\\").replace("\"", "\\\"")
-        buildConfigField("String", "GEMINI_API_KEY", "\"$key\"")
-        buildConfigField("String", "GEMINI_MODEL", "\"$model\"")
+        // Backend config - set in local.properties
+        val backendUrl = project.findProperty("BACKEND_BASE_URL")?.toString() ?: "http://10.0.2.2:8080"
+        val backendKey = project.findProperty("BACKEND_API_KEY")?.toString() ?: "android-dev-key-001"
+        buildConfigField("String", "BACKEND_BASE_URL", "\"$backendUrl\"")
+        buildConfigField("String", "BACKEND_API_KEY", "\"$backendKey\"")
     }
 
     buildFeatures {
@@ -105,4 +107,7 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+
+    // Serialization
+    implementation(libs.kotlinx.serialization.json)
 }
