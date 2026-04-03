@@ -27,7 +27,7 @@ class ProcessTextUseCase @Inject constructor(
         emit(ProcessResult.Loading)
 
         val request = BackendAiRequest(
-            userId = "user-default", //todo: later replace with real userId
+            userId = "user-3", //todo: later replace with real userId
             action = action.actionType.value,
             text = action.inputText,
             targetLanguage = "en"
@@ -65,7 +65,7 @@ class ProcessTextUseCase @Inject constructor(
         "GEMINI_TIMEOUT"      -> "AI service timed out. Try again."
         "GEMINI_RATE_LIMITED" -> "AI service busy. Try again shortly."
         "GEMINI_UNAUTHORIZED" -> "AI service configuration error."
-        "NETWORK_ERROR"       -> "No internet connection."
+        "NETWORK_ERROR"       -> "Network error: $message"
         else                  -> message
     }
 

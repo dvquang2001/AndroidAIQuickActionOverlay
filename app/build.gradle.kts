@@ -50,7 +50,7 @@ android {
         // Backend config - set in local.properties
         val backendUrl = project.findProperty("BACKEND_BASE_URL")?.toString() ?: "http://10.0.2.2:8080"
         val backendKey = project.findProperty("BACKEND_API_KEY")?.toString() ?: "android-dev-key-001"
-        buildConfigField("String", "BACKEND_BASE_URL", "\"$backendUrl\"")
+        buildConfigField("String", "BACKEND_BASE_URL", "\"http://$backendUrl:8080\"")
         buildConfigField("String", "BACKEND_API_KEY", "\"$backendKey\"")
     }
 
