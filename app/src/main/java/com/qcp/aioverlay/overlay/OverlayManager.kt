@@ -3,6 +3,7 @@ package com.qcp.aioverlay.overlay
 import android.content.Context
 import android.graphics.PixelFormat
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.WindowManager
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Recomposer
@@ -74,9 +75,8 @@ class OverlayManager @Inject constructor(
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
             PixelFormat.TRANSLUCENT
         ).apply {
-            gravity = Gravity.TOP or Gravity.END
+            gravity = Gravity.CENTER_VERTICAL or Gravity.END
             x = 16
-            y = 200
         }
 
         floatingButtonView = createComposeView(service!!, overlayLifecycleOwner!!) {
@@ -113,11 +113,20 @@ class OverlayManager @Inject constructor(
         overlayPanelView = createComposeView(service!!, overlayLifecycleOwner!!) {
             OverlayScreen(
                 selectedText = selectedText,
-                viewModel = overlayViewModel!!, // ← pass trực tiếp, không dùng hiltViewModel()
+                viewModel = overlayViewModel!!,
                 onDismiss = { hideOverlayPanel() }
             )
+        }.also { view ->
+            view.isFocusableInTouchMode = true
+            view.setOnKeyListener { _, keyCode, event ->
+                if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
+                    hideOverlayPanel()
+                    true
+                } else false
+            }
         }
         wm.addView(overlayPanelView, params)
+        overlayPanelView?.requestFocus()
     }
 
     fun hideOverlayPanel() {
