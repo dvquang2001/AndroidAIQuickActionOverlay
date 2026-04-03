@@ -12,7 +12,20 @@
           "package_name": "com.qcp.aioverlay"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "719955857781-nntrv16orturf035ts2vmq2j2tk8hgqn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.qcp.aioverlay",
+            "certificate_hash": "8a88b5cd3a1ef7f1ab8927fe5f784a56cda9cd3c"
+          }
+        },
+        {
+          "client_id": "719955857781-docge44fepa5ojl98j1d8gap91mtmqcf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA9W5mRuV1md9CyVgp36PJkm6Gve6zcrMk"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "719955857781-docge44fepa5ojl98j1d8gap91mtmqcf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
