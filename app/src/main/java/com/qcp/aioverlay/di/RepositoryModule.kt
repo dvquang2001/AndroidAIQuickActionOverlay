@@ -1,6 +1,8 @@
 package com.qcp.aioverlay.di
 
+import com.qcp.aioverlay.data.repository.AuthRepositoryImpl
 import com.qcp.aioverlay.data.repository.HistoryRepositoryImpl
+import com.qcp.aioverlay.domain.repository.AuthRepository
 import com.qcp.aioverlay.domain.repository.HistoryRepository
 import dagger.Binds
 import dagger.Module
@@ -16,4 +18,7 @@ abstract class RepositoryModule {
     @Singleton
     abstract fun bindHistoryRepository(impl: HistoryRepositoryImpl): HistoryRepository
 
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
 }

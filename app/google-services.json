@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "719955857781",
+    "project_id": "quickactionoverlay",
+    "storage_bucket": "quickactionoverlay.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719955857781:android:24b71d58615410cf54033c",
+        "android_client_info": {
+          "package_name": "com.qcp.aioverlay"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9W5mRuV1md9CyVgp36PJkm6Gve6zcrMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

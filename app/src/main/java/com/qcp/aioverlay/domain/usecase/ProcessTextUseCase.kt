@@ -12,6 +12,7 @@ import com.qcp.aioverlay.domain.repository.HistoryRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -20,14 +21,16 @@ import javax.inject.Inject
 
 class ProcessTextUseCase @Inject constructor(
     private val backendClient: BackendClient,
-    private val repository: HistoryRepository
+    private val repository: HistoryRepository,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
 ) {
 
     operator fun invoke(action: OverlayAction): Flow<ProcessResult> = flow {
         emit(ProcessResult.Loading)
 
+        val userId = getCurrentUserUseCase().first()?.uid ?: "anonymous"
         val request = BackendAiRequest(
-            userId = "user-3", //todo: later replace with real userId
+            userId = userId,
             action = action.actionType.value,
             text = action.inputText,
             targetLanguage = "en"

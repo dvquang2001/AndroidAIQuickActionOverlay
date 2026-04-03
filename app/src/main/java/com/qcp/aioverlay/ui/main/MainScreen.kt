@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -43,6 +44,7 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    onSignOut: () -> Unit = {},
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -52,6 +54,7 @@ fun MainScreen(
         viewModel.effect.collect { effect ->
             when(effect) {
                 is MainEffect.NavigateTo -> context.startActivity(effect.intent)
+                MainEffect.NavigateToLogin -> onSignOut()
             }
         }
     }
@@ -63,6 +66,9 @@ fun MainScreen(
                 actions = {
                     IconButton(onClick = { viewModel.onIntent(MainIntent.ClearHistory) }) {
                         Icon(Icons.Default.Delete, contentDescription = "Delete history")
+                    }
+                    IconButton(onClick = { viewModel.onIntent(MainIntent.SignOut) }) {
+                        Icon(Icons.Default.Logout, contentDescription = "Sign out")
                     }
                 }
             )

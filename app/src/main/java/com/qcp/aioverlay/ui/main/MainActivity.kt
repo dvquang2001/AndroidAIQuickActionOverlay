@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.qcp.aioverlay.ui.theme.QuickActionOverlayTheme
+import com.qcp.aioverlay.ui.nav.AppNavGraph
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -13,9 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            QuickActionOverlayTheme {
-                MainScreen()
-            }
+            AppNavGraph()
         }
     }
 }

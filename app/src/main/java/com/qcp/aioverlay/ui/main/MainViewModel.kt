@@ -5,6 +5,7 @@ import android.provider.Settings
 import androidx.lifecycle.viewModelScope
 import com.qcp.aioverlay.domain.model.HistoryItem
 import com.qcp.aioverlay.domain.repository.HistoryRepository
+import com.qcp.aioverlay.domain.usecase.SignOutUseCase
 import com.qcp.aioverlay.ui.base.BaseViewModel
 import com.qcp.aioverlay.ui.base.UIEffect
 import com.qcp.aioverlay.ui.base.UiIntent
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: HistoryRepository
+    private val repository: HistoryRepository,
+    private val signOutUseCase: SignOutUseCase
 ) : BaseViewModel<MainUiState, MainIntent, MainEffect>(MainUiState()) {
 
     init {
@@ -44,6 +46,11 @@ class MainViewModel @Inject constructor(
             MainIntent.RefreshPermission -> {
                 //todo: update later
             }
+
+            MainIntent.SignOut -> {
+                signOutUseCase()
+                emitEffect(MainEffect.NavigateToLogin)
+            }
         }
     }
 }
@@ -60,8 +67,10 @@ sealed interface MainIntent: UiIntent {
     data class DeleteHistory(val id: Long): MainIntent
     data object ClearHistory: MainIntent
     data object RefreshPermission: MainIntent
+    data object SignOut: MainIntent
 }
 
 sealed interface MainEffect: UIEffect {
     data class NavigateTo(val intent: Intent): MainEffect
+    data object NavigateToLogin: MainEffect
 }
