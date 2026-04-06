@@ -84,6 +84,24 @@
     <string name="settings_cd_open_link">Open link</string>
     <string name="settings_cd_navigate_settings">Open Settings</string>
 
+    <!-- Confirmation dialogs (shared) -->
+    <string name="dialog_cancel">Cancel</string>
+
+    <!-- Logout dialog -->
+    <string name="dialog_logout_title">Log out?</string>
+    <string name="dialog_logout_message">Are you sure you want to log out of your account?</string>
+    <string name="dialog_logout_confirm">Log out</string>
+
+    <!-- Delete single item dialog -->
+    <string name="dialog_delete_title">Delete item?</string>
+    <string name="dialog_delete_message">This action cannot be undone.</string>
+    <string name="dialog_delete_confirm">Delete</string>
+
+    <!-- Clear all history dialog -->
+    <string name="dialog_clear_history_title">Clear all history?</string>
+    <string name="dialog_clear_history_message">All history items will be permanently deleted. This action cannot be undone.</string>
+    <string name="dialog_clear_history_confirm">Clear all</string>
+
     <!-- How to Use / Tutorial screen -->
     <string name="tutorial_cd_how_to_use">How to use</string>
     <string name="tutorial_btn_skip">Skip</string>

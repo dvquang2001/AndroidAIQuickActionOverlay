@@ -45,6 +45,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -58,6 +61,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.qcp.aioverlay.R
 import com.qcp.aioverlay.domain.model.ActionType
 import com.qcp.aioverlay.domain.model.HistoryItem
+import com.qcp.aioverlay.ui.components.ConfirmDialog
 import com.qcp.aioverlay.ui.ext.labelRes
 import com.qcp.aioverlay.ui.theme.QuickActionOverlayTheme
 import java.text.SimpleDateFormat
@@ -75,6 +79,10 @@ fun MainScreen(
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
+    // ── Dialog visibility state (UI-only) ─────────────────────────────────────
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    var showClearHistoryDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -97,12 +105,13 @@ fun MainScreen(
                         )
                     },
                     actions = {
+                        // Clear all history — guarded by confirmation dialog
                         AnimatedVisibility(
                             visible = state.history.isNotEmpty(),
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            IconButton(onClick = { viewModel.onIntent(MainIntent.ClearHistory) }) {
+                            IconButton(onClick = { showClearHistoryDialog = true }) {
                                 Icon(
                                     Icons.Default.Delete,
                                     contentDescription = stringResource(R.string.main_cd_delete_history),
@@ -124,7 +133,8 @@ fun MainScreen(
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                        IconButton(onClick = { viewModel.onIntent(MainIntent.SignOut) }) {
+                        // Logout — guarded by confirmation dialog
+                        IconButton(onClick = { showLogoutDialog = true }) {
                             Icon(
                                 Icons.Default.Logout,
                                 contentDescription = stringResource(R.string.main_cd_sign_out),
@@ -206,6 +216,30 @@ fun MainScreen(
 
                 item { Spacer(Modifier.height(16.dp)) }
             }
+        }
+
+        // ── Logout confirmation dialog ─────────────────────────────────────────
+        if (showLogoutDialog) {
+            ConfirmDialog(
+                title = stringResource(R.string.dialog_logout_title),
+                message = stringResource(R.string.dialog_logout_message),
+                confirmText = stringResource(R.string.dialog_logout_confirm),
+                onConfirm = { viewModel.onIntent(MainIntent.SignOut) },
+                onDismiss = { showLogoutDialog = false },
+                isDestructive = false
+            )
+        }
+
+        // ── Clear all history confirmation dialog ─────────────────────────────
+        if (showClearHistoryDialog) {
+            ConfirmDialog(
+                title = stringResource(R.string.dialog_clear_history_title),
+                message = stringResource(R.string.dialog_clear_history_message),
+                confirmText = stringResource(R.string.dialog_clear_history_confirm),
+                onConfirm = { viewModel.onIntent(MainIntent.ClearHistory) },
+                onDismiss = { showClearHistoryDialog = false },
+                isDestructive = true
+            )
         }
     }
 }
@@ -372,6 +406,9 @@ fun HistoryItem(
 ) {
     val date = SimpleDateFormat("dd MMM · HH:mm", Locale.getDefault()).format(Date(item.createdAt))
 
+    // Dialog state local to this item — shown when user taps the delete icon
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -397,8 +434,9 @@ fun HistoryItem(
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+                    // Delete — guarded by confirmation dialog
                     IconButton(
-                        onClick = onDelete,
+                        onClick = { showDeleteDialog = true },
                         modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
@@ -433,6 +471,18 @@ fun HistoryItem(
                 overflow = TextOverflow.Ellipsis
             )
         }
+    }
+
+    // ── Delete single item confirmation dialog ────────────────────────────────
+    if (showDeleteDialog) {
+        ConfirmDialog(
+            title = stringResource(R.string.dialog_delete_title),
+            message = stringResource(R.string.dialog_delete_message),
+            confirmText = stringResource(R.string.dialog_delete_confirm),
+            onConfirm = onDelete,   // calls the existing lambda passed from parent
+            onDismiss = { showDeleteDialog = false },
+            isDestructive = true
+        )
     }
 }
 
