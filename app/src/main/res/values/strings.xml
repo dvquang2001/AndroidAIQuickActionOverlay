@@ -55,4 +55,32 @@
     <string name="register_btn_register">Register</string>
     <string name="register_link_sign_in">Already have an account? Sign In</string>
     <string name="register_error_password_mismatch">Passwords do not match</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_cd_back">Back</string>
+
+    <!-- Settings — Appearance -->
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_theme_label">Theme</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_system">System</string>
+
+    <!-- Settings — Language -->
+    <string name="settings_section_language">Language</string>
+    <string name="settings_language_label">Language</string>
+    <string name="settings_more_languages">More languages</string>
+    <string name="settings_language_picker_title">Select Language</string>
+    <string name="settings_language_picker_close">Close</string>
+    <string name="settings_language_group_primary">Primary</string>
+    <string name="settings_language_group_europe">Europe</string>
+
+    <!-- Settings — About -->
+    <string name="settings_section_about">About</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_privacy_policy">Privacy Policy</string>
+    <string name="settings_terms_of_service">Terms of Service</string>
+    <string name="settings_cd_open_link">Open link</string>
+    <string name="settings_cd_navigate_settings">Open Settings</string>
 </resources>

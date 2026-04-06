@@ -8,11 +8,13 @@ import androidx.navigation.compose.rememberNavController
 import com.qcp.aioverlay.ui.auth.LoginScreen
 import com.qcp.aioverlay.ui.auth.RegisterScreen
 import com.qcp.aioverlay.ui.main.MainScreen
+import com.qcp.aioverlay.ui.settings.SettingsScreen
 
 private object Routes {
     const val LOGIN = "login"
     const val REGISTER = "register"
     const val MAIN = "main"
+    const val SETTINGS = "settings"
 }
 
 @Composable
@@ -51,7 +53,16 @@ fun AppNavGraph(navController: NavHostController = rememberNavController()) {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(Routes.MAIN) { inclusive = true }
                     }
+                },
+                onNavigateToSettings = {
+                    navController.navigate(Routes.SETTINGS)
                 }
+            )
+        }
+
+        composable(Routes.SETTINGS) {
+            SettingsScreen(
+                onBack = { navController.popBackStack() }
             )
         }
     }
