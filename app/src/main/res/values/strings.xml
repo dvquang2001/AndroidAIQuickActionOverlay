@@ -83,4 +83,25 @@
     <string name="settings_terms_of_service">Terms of Service</string>
     <string name="settings_cd_open_link">Open link</string>
     <string name="settings_cd_navigate_settings">Open Settings</string>
+
+    <!-- How to Use / Tutorial screen -->
+    <string name="tutorial_cd_how_to_use">How to use</string>
+    <string name="tutorial_btn_skip">Skip</string>
+    <string name="tutorial_btn_next">Next</string>
+    <string name="tutorial_btn_get_started">Get Started</string>
+
+    <string name="tutorial_slide1_title">Welcome to AI Overlay</string>
+    <string name="tutorial_slide1_desc">Translate text instantly anywhere on your screen — no switching apps, no copying.</string>
+
+    <string name="tutorial_slide2_title">Enable Permissions</string>
+    <string name="tutorial_slide2_desc">Grant Accessibility and Overlay permissions so the AI button can appear on any screen.</string>
+
+    <string name="tutorial_slide3_title">Long Press Any Text</string>
+    <string name="tutorial_slide3_desc">Select text in any app, then long-press to trigger the floating AI button.</string>
+
+    <string name="tutorial_slide4_title">Tap the Floating Button</string>
+    <string name="tutorial_slide4_desc">The AI ✨ button appears at the edge of your screen. Tap it to open quick actions.</string>
+
+    <string name="tutorial_slide5_title">Fast &amp; Smart Results</string>
+    <string name="tutorial_slide5_desc">Translate, summarise, or explain — then copy the result with one tap.</string>
 </resources>

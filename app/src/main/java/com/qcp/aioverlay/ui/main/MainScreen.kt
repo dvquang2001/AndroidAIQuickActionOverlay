@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Accessibility
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.Logout
@@ -68,6 +69,7 @@ import java.util.Locale
 fun MainScreen(
     onSignOut: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
+    onNavigateToHowToUse: () -> Unit = {},
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -107,6 +109,13 @@ fun MainScreen(
                                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
+                        }
+                        IconButton(onClick = onNavigateToHowToUse) {
+                            Icon(
+                                Icons.Default.Help,
+                                contentDescription = stringResource(R.string.tutorial_cd_how_to_use),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                         IconButton(onClick = onNavigateToSettings) {
                             Icon(
