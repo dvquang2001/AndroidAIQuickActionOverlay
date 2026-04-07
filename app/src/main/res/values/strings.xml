@@ -15,6 +15,8 @@
     <string name="main_permission_accessibility_desc">Enable to use AI Quick Action</string>
     <string name="main_permission_overlay_title">Overlay Permission</string>
     <string name="main_permission_overlay_desc">Enable to show AI Quick Action</string>
+    <string name="main_permission_status_enabled">Enabled</string>
+    <string name="main_permission_status_disabled">Not enabled</string>
     <string name="main_history_title">History</string>
     <string name="main_history_empty">No history</string>
     <string name="main_cd_delete_item">Delete</string>

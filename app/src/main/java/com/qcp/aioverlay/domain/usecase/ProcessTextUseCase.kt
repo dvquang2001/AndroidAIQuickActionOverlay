@@ -40,7 +40,9 @@ class ProcessTextUseCase @Inject constructor(
             is BackendResult.Success -> {
                 val output = result.response.result
                 emit(ProcessResult.Success(output))
-                saveToHistory(action, output)
+                // saveToHistory is intentionally NOT called here.
+                // OverlayViewModel.runAction() calls it once in invokeOnCompletion
+                // after the flow completes — calling it here too caused duplicate entries.
             }
 
             is BackendResult.Error -> {

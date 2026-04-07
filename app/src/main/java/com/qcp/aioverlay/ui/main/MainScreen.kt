@@ -42,6 +42,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,6 +51,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -58,6 +60,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.qcp.aioverlay.R
 import com.qcp.aioverlay.domain.model.ActionType
 import com.qcp.aioverlay.domain.model.HistoryItem
@@ -91,6 +96,20 @@ fun MainScreen(
                 MainEffect.NavigateToLogin -> onSignOut()
             }
         }
+    }
+
+    // Re-check permission state every time the app returns to the foreground.
+    // This covers the case where the user navigated to system Settings, toggled a
+    // permission, and then returned — the UI updates immediately on resume.
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.onIntent(MainIntent.RefreshPermission)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     QuickActionOverlayTheme {
@@ -299,16 +318,27 @@ fun PermissionCard(
     isEnabled: Boolean,
     onClick: () -> Unit,
 ) {
-    val activeColor = MaterialTheme.colorScheme.primaryContainer
-    val inactiveColor = MaterialTheme.colorScheme.surfaceVariant
+    // Tapping an already-enabled permission card is a no-op — the ViewModel
+    // guards against opening Settings unnecessarily, but we also give the card
+    // a non-interactive look when enabled so the user understands it's active.
+    val statusText = stringResource(
+        if (isEnabled) R.string.main_permission_status_enabled
+        else R.string.main_permission_status_disabled
+    )
+    val statusColor: Color = if (isEnabled)
+        MaterialTheme.colorScheme.primary
+    else
+        MaterialTheme.colorScheme.error
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = if (isEnabled) activeColor.copy(alpha = 0.4f)
-                             else MaterialTheme.colorScheme.surfaceContainerLow
+            containerColor = if (isEnabled)
+                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)
+            else
+                MaterialTheme.colorScheme.surfaceContainerLow
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -337,7 +367,7 @@ fun PermissionCard(
                 }
             }
 
-            // Text
+            // Text block: title + purpose description + live status
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
@@ -349,9 +379,16 @@ fun PermissionCard(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = statusText,
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = statusColor
+                )
             }
 
-            // Switch
+            // Switch — read-only indicator, interaction handled by the card click
             Switch(
                 checked = isEnabled,
                 onCheckedChange = null,
