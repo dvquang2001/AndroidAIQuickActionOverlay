@@ -154,6 +154,7 @@ class OverlayManager @Inject constructor(
         content: @Composable () -> Unit,
     ): ComposeView {
         return ComposeView(service).apply {
+            setBackgroundColor(android.graphics.Color.TRANSPARENT)
             setViewTreeLifecycleOwner(lifecycleOwner)
             setViewTreeViewModelStoreOwner(lifecycleOwner)
             setViewTreeSavedStateRegistryOwner(lifecycleOwner)
